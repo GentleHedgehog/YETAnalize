@@ -13,6 +13,9 @@ public:
     explicit YetAnalizer(QObject *parent = nullptr);
 
     bool analize(const QString &input, QString &ans);
+
+    void appendValue(QString yetType, QString yetNumber, double yetValue);
+    double lastSum();
 signals:
 
 public slots:

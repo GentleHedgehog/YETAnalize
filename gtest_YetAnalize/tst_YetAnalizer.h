@@ -122,3 +122,16 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesMultipliers)
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 002*4");
 }
+
+TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliers)
+{
+    yetAnalizer.appendValue("СТО", "001", 0.31);
+    yetAnalizer.appendValue("СТО", "002", 0.5);
+    input = "Сто 001*2, 002*4";
+
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+
+
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*4");
+    ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4);
+}

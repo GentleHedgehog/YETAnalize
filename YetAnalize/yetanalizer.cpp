@@ -1,5 +1,5 @@
 #include "yetanalizer.h"
-
+#include <QMap>
 #include <QRegExp>
 
 namespace {
@@ -8,6 +8,9 @@ const QString MSG_NO_TYPES = "Не найден ни один тип УЕТ";
 const QString MSG_TYPE_FOUND = "Найден тип УЕТ: ";
 
 const QList<QString> knownTypes = {"СТО", "СТТ"};
+
+double lastSumValue = 0;
+QMap<QPair<QString, QString>, double> yetMap;
 }
 
 YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
@@ -46,8 +49,44 @@ QStringList YetAnalizer::searchValueTuples(const QString &input)
     return res;
 }
 
+QPair<QString, int> extractMultiplier(const QString &input)
+{
+    QPair<QString, int> res;
+    res.first = "";
+    res.second = 1;
+
+    bool isMulFound = false;
+    QString multValue;
+    foreach (QChar c, input) {
+        if (isMulFound)
+        {
+            multValue.append(c);
+        }
+        else
+        {
+            if (c == '*')
+            {
+                isMulFound = true;
+            }
+            else
+            {
+                res.first.append(c);
+            }
+        }
+    }
+
+    if (! multValue.isEmpty())
+    {
+        res.second = multValue.toInt();
+    }
+    return res;
+}
+
+
 bool YetAnalizer::analize(const QString &input, QString &ans)
 {
+    lastSumValue = 0;
+
     bool ok = false;
     if (input.isEmpty())
     {
@@ -68,6 +107,9 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
                 types += types.isEmpty() ? "" : ", ";
                 types += knownTypes.at(i);
 
+                QPair<QString, QString> key;
+                key.first = knownTypes.at(i);
+
                 for (int tupleIndex = 0; tupleIndex < l.size(); ++tupleIndex)
                 {
                     QStringList vt = searchValueTuples(l.at(tupleIndex));
@@ -75,6 +117,10 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
                     for (int valueTupleIndex = 0; valueTupleIndex < vt.size(); ++valueTupleIndex)
                     {
                         types += " " + vt.at(valueTupleIndex);
+                        QPair<QString, int> vt_pair = extractMultiplier(vt.at(valueTupleIndex));
+                        key.second = vt_pair.first;
+
+                        lastSumValue += yetMap[key] * vt_pair.second;
                     }
                 }
             }
@@ -83,6 +129,16 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
         ans = ok ? ans + types : MSG_NO_TYPES;
     }
     return ok;
+}
+
+void YetAnalizer::appendValue(QString yetType, QString yetNumber, double yetValue)
+{
+    yetMap.insert(qMakePair(yetType, yetNumber), yetValue);
+}
+
+double YetAnalizer::lastSum()
+{
+    return lastSumValue;
 }
 
 

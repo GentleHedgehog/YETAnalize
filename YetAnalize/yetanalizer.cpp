@@ -78,7 +78,6 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
                     }
                 }
             }
-
         }
 
         ans = ok ? ans + types : MSG_NO_TYPES;

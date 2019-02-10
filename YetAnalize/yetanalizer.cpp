@@ -35,7 +35,7 @@ QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input
 QStringList YetAnalizer::searchValueTuples(const QString &input)
 {
     QRegExp rx;
-    rx.setPattern("(\\d+)");
+    rx.setPattern("(\\d+\\*\\d+|\\d+)");
     QStringList res;
     int pos = 0;
 

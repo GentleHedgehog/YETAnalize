@@ -108,3 +108,17 @@ TEST_F(TestFixtureYetAnalize, returnTwoTypesWithSeveralValues)
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041 001 002, СТТ 245 12 23");
 }
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplier)
+{
+    input = "Сто 041*2";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesMultipliers)
+{
+    input = "Сто 041*2, 002*4";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 002*4");
+}

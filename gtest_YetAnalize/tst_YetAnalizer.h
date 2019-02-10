@@ -46,9 +46,16 @@ TEST_F(TestFixtureYetAnalize, errorIfNothingFound)
     ASSERT_STREQ_QT(ans, "Не найден ни один тип УЕТ");
 }
 
-TEST_F(TestFixtureYetAnalize, returnTypeIfFound)
+TEST_F(TestFixtureYetAnalize, returnTypeSTO)
 {
     input = "сто";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeSTT)
+{
+    input = "стТ";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ");
 }

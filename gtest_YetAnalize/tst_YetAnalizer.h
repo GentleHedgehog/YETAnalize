@@ -56,6 +56,7 @@ TEST_F(TestFixtureYetAnalize, returnTypeSTO)
 TEST_F(TestFixtureYetAnalize, returnTypeSTT)
 {
     input = "стТ";
+//    DEBUG_GTEST(qPrintable(input));
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ");
 }

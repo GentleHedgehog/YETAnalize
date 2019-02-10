@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     analizer.appendValue("СТТ", "053",	0.03 );
     analizer.appendValue("СТТ", "061",	1.7  );
 
+    setWindowTitle("Подсчет УЕТ");
 }
 
 MainWindow::~MainWindow()

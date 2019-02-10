@@ -15,18 +15,35 @@ YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
 
 }
 
-bool YetAnalizer::searchNextTypePos(QString typeName, const QString &input, int &pos)
+QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input)
 {
     QRegExp rx;
     rx.setCaseSensitivity(Qt::CaseInsensitive);
-    rx.setPattern(typeName);
+    rx.setPattern(typeName + "[\\d\\s\\W]*");
 
-    bool ok = false;
-    pos = rx.indexIn(input, pos);
-    ok = pos != -1;
-    pos += rx.matchedLength();
+    rx.indexIn(input);
 
-    return ok;
+    QStringList res = rx.capturedTexts();
+    if (res.at(0).isEmpty())
+    {
+        res.clear();
+    }
+
+    return res;
+}
+
+QStringList YetAnalizer::searchValueTuples(const QString &input)
+{
+    QRegExp rx;
+    rx.setPattern("(\\d+)");
+    QStringList res;
+    int pos = 0;
+
+    while ((pos = rx.indexIn(input, pos)) != -1) {
+        res << rx.cap(1);
+        pos += rx.matchedLength();
+    }
+    return res;
 }
 
 bool YetAnalizer::analize(const QString &input, QString &ans)
@@ -43,19 +60,25 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
 
         for (int i = 0; i < knownTypes.size(); ++i)
         {
-            int pos = 0;
-            while (searchNextTypePos(knownTypes.at(i), input, pos))
-            {
-                QRegExp rx;
-                rx.setPattern("\\d\\d\\d");
-                int numPos = rx.indexIn(input, pos);
-                bool isNumberFound = numPos != -1;
+            QStringList l = searchTypeTuples(knownTypes.at(i), input);
 
+            if (l.size())
+            {
                 ok = true;
                 types += types.isEmpty() ? "" : ", ";
                 types += knownTypes.at(i);
-                types += isNumberFound ? " " + rx.cap() : "";
+
+                for (int tupleIndex = 0; tupleIndex < l.size(); ++tupleIndex)
+                {
+                    QStringList vt = searchValueTuples(l.at(tupleIndex));
+
+                    for (int valueTupleIndex = 0; valueTupleIndex < vt.size(); ++valueTupleIndex)
+                    {
+                        types += " " + vt.at(valueTupleIndex);
+                    }
+                }
             }
+
         }
 
         ans = ok ? ans + types : MSG_NO_TYPES;

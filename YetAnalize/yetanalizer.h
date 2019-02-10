@@ -6,8 +6,9 @@
 class YetAnalizer : public QObject
 {
     Q_OBJECT
-    bool searchNextTypePos(QString typeName, const QString &input, int &pos);
     
+    QStringList searchTypeTuples(QString typeName, const QString &input);
+    QStringList searchValueTuples(const QString &input);
 public:
     explicit YetAnalizer(QObject *parent = nullptr);
 

@@ -1,5 +1,6 @@
 #include "yetanalizer.h"
 #include <QMap>
+#include <cassert>
 #include <QRegExp>
 
 namespace {
@@ -10,7 +11,7 @@ const QString MSG_TYPE_FOUND = "Найден тип УЕТ: ";
 const QList<QString> knownTypes = {"СТО", "СТТ"};
 
 double lastSumValue = 0;
-QMap<QPair<QString, QString>, double> yetMap;
+QMap<QPair<QString, int>, double> yetMap;
 }
 
 YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
@@ -107,7 +108,7 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
                 types += types.isEmpty() ? "" : ", ";
                 types += knownTypes.at(i);
 
-                QPair<QString, QString> key;
+                QPair<QString, int> key;
                 key.first = knownTypes.at(i);
 
                 for (int tupleIndex = 0; tupleIndex < l.size(); ++tupleIndex)
@@ -118,7 +119,11 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
                     {
                         types += " " + vt.at(valueTupleIndex);
                         QPair<QString, int> vt_pair = extractMultiplier(vt.at(valueTupleIndex));
-                        key.second = vt_pair.first;
+
+                        bool ok = false;
+                        int number = vt_pair.first.toInt(&ok);
+                        assert(ok);
+                        key.second = number;
 
                         lastSumValue += yetMap[key] * vt_pair.second;
                     }
@@ -133,7 +138,10 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
 
 void YetAnalizer::appendValue(QString yetType, QString yetNumber, double yetValue)
 {
-    yetMap.insert(qMakePair(yetType, yetNumber), yetValue);
+    bool ok = false;
+    int number = yetNumber.toInt(&ok);
+    assert(ok);
+    yetMap.insert(qMakePair(yetType, number), yetValue);
 }
 
 double YetAnalizer::lastSum()

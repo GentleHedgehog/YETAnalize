@@ -15,6 +15,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_pb_Calc_clicked();
+
+    void on_le_input_editingFinished();
+
+    void on_le_input_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
 };

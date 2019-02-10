@@ -56,7 +56,20 @@ TEST_F(TestFixtureYetAnalize, returnTypeSTO)
 TEST_F(TestFixtureYetAnalize, returnTypeSTT)
 {
     input = "стТ";
-//    DEBUG_GTEST(qPrintable(input));
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ");
+}
+
+TEST_F(TestFixtureYetAnalize, returnSeveralTypes)
+{
+    input = "стТ,Сто";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО, СТТ");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithValue)
+{
+    input = "Сто 041";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041");
 }

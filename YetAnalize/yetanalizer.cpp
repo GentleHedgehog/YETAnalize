@@ -15,6 +15,20 @@ YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
 
 }
 
+bool YetAnalizer::searchNextTypePos(QString typeName, const QString &input, int &pos)
+{
+    QRegExp rx;
+    rx.setCaseSensitivity(Qt::CaseInsensitive);
+    rx.setPattern(typeName);
+
+    bool ok = false;
+    pos = rx.indexIn(input, pos);
+    ok = pos != -1;
+    pos += rx.matchedLength();
+
+    return ok;
+}
+
 bool YetAnalizer::analize(const QString &input, QString &ans)
 {
     bool ok = false;
@@ -24,20 +38,27 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
     }
     else
     {
-        ans = MSG_NO_TYPES;
+        ans = MSG_TYPE_FOUND;
+        QString types = "";
+
         for (int i = 0; i < knownTypes.size(); ++i)
         {
-            QRegExp rx;
-            rx.setCaseSensitivity(Qt::CaseInsensitive);
-            rx.setPattern(knownTypes.at(i));
-
             int pos = 0;
-            if ((pos = rx.indexIn(input, pos)) != -1) {
+            while (searchNextTypePos(knownTypes.at(i), input, pos))
+            {
+                QRegExp rx;
+                rx.setPattern("\\d\\d\\d");
+                int numPos = rx.indexIn(input, pos);
+                bool isNumberFound = numPos != -1;
+
                 ok = true;
-                ans = MSG_TYPE_FOUND + knownTypes.at(i);
-                break;
+                types += types.isEmpty() ? "" : ", ";
+                types += knownTypes.at(i);
+                types += isNumberFound ? " " + rx.cap() : "";
             }
         }
+
+        ans = ok ? ans + types : MSG_NO_TYPES;
     }
     return ok;
 }

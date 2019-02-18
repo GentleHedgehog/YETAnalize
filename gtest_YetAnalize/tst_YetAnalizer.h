@@ -115,8 +115,8 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithoutSpace)
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithUnknownValues)
 {
-    yetAnalizer.appendValue("СТТ", "041", 0.1);
-    yetAnalizer.appendValue("СТТ", "002", 0.1);
+    yetAnalizer.registerTypeWithValue("СТТ", "041", 0.1);
+    yetAnalizer.registerTypeWithValue("СТТ", "002", 0.1);
     input = "Стт 041, 111, 222, 002";
     yetAnalizer.setIsAnsUnknownValues(true);
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
@@ -174,8 +174,8 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesMultipliersWithSpaces)
 
 TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliers)
 {
-    yetAnalizer.appendValue("СТО", "001", 0.31);
-    yetAnalizer.appendValue("СТО", "002", 0.5);
+    yetAnalizer.registerTypeWithValue("СТО", "001", 0.31);
+    yetAnalizer.registerTypeWithValue("СТО", "002", 0.5);
     input = "Сто 001*2, 002*4";
 
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
@@ -187,11 +187,11 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliers)
 
 TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypes)
 {
-    yetAnalizer.appendValue("СТО", "001", 0.31);
-    yetAnalizer.appendValue("СТО", "002", 0.5);
+    yetAnalizer.registerTypeWithValue("СТО", "001", 0.31);
+    yetAnalizer.registerTypeWithValue("СТО", "002", 0.5);
 
-    yetAnalizer.appendValue("СТТ", "005", 1.68);
-    yetAnalizer.appendValue("СТТ", "006", 1.18);
+    yetAnalizer.registerTypeWithValue("СТТ", "005", 1.68);
+    yetAnalizer.registerTypeWithValue("СТТ", "006", 1.18);
     input = "Сто 001*2, 002*4 Стт 005, 006*3";
 
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
@@ -203,11 +203,11 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypes)
 
 TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypesWithUnknownValues)
 {
-    yetAnalizer.appendValue("СТО", "001", 0.31);
-    yetAnalizer.appendValue("СТО", "002", 0.5);
+    yetAnalizer.registerTypeWithValue("СТО", "001", 0.31);
+    yetAnalizer.registerTypeWithValue("СТО", "002", 0.5);
 
-    yetAnalizer.appendValue("СТТ", "005", 1.68);
-    yetAnalizer.appendValue("СТТ", "006", 1.18);
+    yetAnalizer.registerTypeWithValue("СТТ", "005", 1.68);
+    yetAnalizer.registerTypeWithValue("СТТ", "006", 1.18);
     input = "Сто 001*2, 111*4, 002*4 Стт 005, 006*3";
     yetAnalizer.setIsAnsUnknownValues(true);
 

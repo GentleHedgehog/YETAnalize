@@ -13,6 +13,52 @@ const QList<QString> knownTypes = {"СТО", "СТТ"};
 
 double lastSumValue = 0;
 QMap<QPair<QString, int>, double> yetMap;
+
+QPair<int, int> extractValueAndMultiplier(const QString &input)
+{
+    QPair<int, int> res;
+    res.first = 0;
+    res.second = 1;
+
+    bool isMulFound = false;
+    QString multValueStr;
+    QString valueStr;
+    foreach (QChar c, input) {
+        if (isMulFound)
+        {
+            multValueStr.append(c);
+        }
+        else
+        {
+            if (c == '*')
+            {
+                isMulFound = true;
+            }
+            else
+            {
+                valueStr.append(c);
+            }
+        }
+    }
+
+    if (! valueStr.isEmpty())
+    {
+        bool ok = false;
+        int value_number = valueStr.toInt(&ok);
+        assert(ok);
+        res.first = value_number;
+    }
+
+    if (! multValueStr.isEmpty())
+    {
+        bool ok = false;
+        int mult_number = multValueStr.toInt(&ok);
+        assert(ok);
+        res.second = mult_number;
+    }
+
+    return res;
+}
 }
 
 YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
@@ -51,38 +97,7 @@ QStringList YetAnalizer::searchValueTuples(const QString &input)
     return res;
 }
 
-QPair<QString, int> extractMultiplier(const QString &input)
-{
-    QPair<QString, int> res;
-    res.first = "";
-    res.second = 1;
 
-    bool isMulFound = false;
-    QString multValue;
-    foreach (QChar c, input) {
-        if (isMulFound)
-        {
-            multValue.append(c);
-        }
-        else
-        {
-            if (c == '*')
-            {
-                isMulFound = true;
-            }
-            else
-            {
-                res.first.append(c);
-            }
-        }
-    }
-
-    if (! multValue.isEmpty())
-    {
-        res.second = multValue.toInt();
-    }
-    return res;
-}
 
 
 void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QString &types)
@@ -100,12 +115,9 @@ void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QStr
         for (int valueTupleIndex = 0; valueTupleIndex < valueTuples.size(); ++valueTupleIndex)
         {
             QString nextValue = valueTuples.at(valueTupleIndex);
-            QPair<QString, int> vt_pair = extractMultiplier(nextValue);
+            QPair<int, int> vt_pair = extractValueAndMultiplier(nextValue);
 
-            bool ok = false;
-            int number = vt_pair.first.toInt(&ok);
-            assert(ok);
-            key.second = number;
+            key.second = vt_pair.first;
 
             if (yetMap.contains(key))
             {
@@ -115,11 +127,29 @@ void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QStr
             else
             {
                 unknownValues.append(key.first + " " + QString::number(key.second));
-                if (! isAnsUnknownValues)
+                bool isPrintUnknownValues = ! isAnsUnknownValues;
+                if (isPrintUnknownValues)
                 {
                     types += " " + nextValue;
                 }
             }
+        }
+    }
+}
+
+void YetAnalizer::appendUnknownValuesToAnswer(QString &ans)
+{
+    if (isAnsUnknownValues)
+    {
+        if (! unknownValues.isEmpty())
+        {
+            QString unknownValuesStr;
+            foreach (const QString &s, unknownValues)
+            {
+                unknownValuesStr += unknownValuesStr.isEmpty() ? "" : ", ";
+                unknownValuesStr += s;
+            }
+            ans += MSG_UNKNOWN_VALUES + unknownValuesStr;
         }
     }
 }
@@ -152,24 +182,12 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
 
         ans = ok ? ans + types : MSG_NO_TYPES;
 
-        if (isAnsUnknownValues)
-        {
-            if (! unknownValues.isEmpty())
-            {
-                QString unknownValuesStr;
-                foreach (const QString &s, unknownValues)
-                {
-                    unknownValuesStr += unknownValuesStr.isEmpty() ? "" : ", ";
-                    unknownValuesStr += s;
-                }
-                ans += MSG_UNKNOWN_VALUES + unknownValuesStr;
-            }
-        }
+        appendUnknownValuesToAnswer(ans);
     }
     return ok;
 }
 
-void YetAnalizer::appendValue(QString yetType, QString yetNumber, double yetValue)
+void YetAnalizer::registerTypeWithValue(QString yetType, QString yetNumber, double yetValue)
 {
     bool ok = false;
     int number = yetNumber.toInt(&ok);

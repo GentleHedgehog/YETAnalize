@@ -17,7 +17,7 @@ public:
     bool analize(const QString &input,
                  QString &ans);
 
-    void appendValue(QString yetType, QString yetNumber, double yetValue);
+    void registerTypeWithValue(QString yetType, QString yetNumber, double yetValue);
     double lastSum();
 
     void setIsAnsUnknownValues(bool value);
@@ -29,6 +29,7 @@ public slots:
 private:
     bool isAnsUnknownValues = false;
     QStringList unknownValues;
+    void appendUnknownValuesToAnswer(QString &ans);
 };
 
 #endif // YETANALIZER_H

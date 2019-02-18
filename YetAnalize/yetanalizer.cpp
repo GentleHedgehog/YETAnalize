@@ -158,7 +158,7 @@ void YetAnalizer::printYetValueToAnswer(QString &answer, QPair<QString, int> key
     }
     else
     {
-        unknownValues.append(key.first + " " + QString::number(key.second));
+        unknownValues.append(key.first + " " + nextValue);
     }
 }
 

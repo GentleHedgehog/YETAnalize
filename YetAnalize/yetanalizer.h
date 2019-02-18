@@ -19,9 +19,16 @@ public:
 
     void appendValue(QString yetType, QString yetNumber, double yetValue);
     double lastSum();
+
+    void setIsAnsUnknownValues(bool value);
+
 signals:
 
 public slots:
+
+private:
+    bool isAnsUnknownValues = false;
+    QStringList unknownValues;
 };
 
 #endif // YETANALIZER_H

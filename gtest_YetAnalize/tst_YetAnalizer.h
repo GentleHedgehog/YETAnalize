@@ -4,13 +4,14 @@
 #include "test_qt_signals.h"
 
 #include "../YetAnalize/yetanalizer.h"
+#include "../YetAnalize/yetfiller.h"
 
 class TestFixtureYetAnalize : public ::testing::Test
 {
 public:
     void SetUp()
     {
-
+//        fillAnalizerWithYetInfo(yetAnalizer);
     }
 protected:
     YetAnalizer yetAnalizer;
@@ -34,7 +35,6 @@ protected:
 };
 
 // TODO show unknown types and values
-// TODO remove spaces like 041 * 2 -> 041*2
 // TODO replace other symbols to * (-, x (eng), х (rus))
 
 TEST_F(TestFixtureYetAnalize, errorIfEmptyInput)
@@ -87,9 +87,9 @@ TEST_F(TestFixtureYetAnalize, returnSeveralTypesWithoutUnknown)
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithValue)
 {
-    input = "Сто 041";
+    input = "Сто 005";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
-    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041");
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 005");
 }
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithValueWithoutSpace)
@@ -101,20 +101,30 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithValueWithoutSpace)
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValues)
 {
-    input = "Сто 041, 002";
+    input = "Сто 005, 006";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
-    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041 002");
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 005 006");
 }
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithoutSpace)
 {
-    input = "Стт041,002";
+    input = "Стт041,005";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
-    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 002");
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 005");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithUnknownValues)
+{
+    yetAnalizer.appendValue("СТТ", "041", 0.1);
+    yetAnalizer.appendValue("СТТ", "002", 0.1);
+    input = "Стт 041, 111, 222, 002";
+    yetAnalizer.setIsAnsUnknownValues(true);
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 002 | Неизвестные значения: СТТ 111, СТТ 222");
 }
 
 TEST_F(TestFixtureYetAnalize, returnTwoTypesWithOneValue)
-{
+{    
     input = "Сто041стт245";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041, СТТ 245");
@@ -188,5 +198,23 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypes)
 
 
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*4, СТТ 005 006*3");
+    ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4 + 1.68 + 1.18*3);
+}
+
+TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypesWithUnknownValues)
+{
+    yetAnalizer.appendValue("СТО", "001", 0.31);
+    yetAnalizer.appendValue("СТО", "002", 0.5);
+
+    yetAnalizer.appendValue("СТТ", "005", 1.68);
+    yetAnalizer.appendValue("СТТ", "006", 1.18);
+    input = "Сто 001*2, 111*4, 002*4 Стт 005, 006*3";
+    yetAnalizer.setIsAnsUnknownValues(true);
+
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+
+
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*4, СТТ 005 006*3"
+                         " | Неизвестные значения: СТО 111");
     ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4 + 1.68 + 1.18*3);
 }

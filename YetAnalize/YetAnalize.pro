@@ -17,6 +17,7 @@ SOURCES += main.cpp\
     yetanalizer.cpp
 
 HEADERS  += mainwindow.h \
-    yetanalizer.h
+    yetanalizer.h \
+    yetfiller.h
 
 FORMS    += mainwindow.ui

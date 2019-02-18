@@ -21,3 +21,6 @@ HEADERS  += mainwindow.h \
     yetfiller.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    rsc.qrc

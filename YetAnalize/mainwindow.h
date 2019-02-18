@@ -22,6 +22,12 @@ private slots:
 
     void on_le_input_textChanged(const QString &arg1);
 
+    void on_pb_paste_clicked();
+
+    void on_pb_clear_clicked();
+
+    void on_pb_copy_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

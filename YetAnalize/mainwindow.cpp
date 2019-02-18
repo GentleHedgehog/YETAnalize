@@ -3,6 +3,7 @@
 
 #include "yetanalizer.h"
 #include "yetfiller.h"
+#include <QClipboard>
 
 namespace {
 YetAnalizer analizer;
@@ -18,6 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle("Подсчет УЕТ");
     analizer.setIsCollectUnknownValues(true);
+
+    ui->pb_paste->setIcon(QIcon(":/paste.ico"));
+    ui->pb_clear->setIcon(QIcon(":/clear.ico"));
+    ui->pb_Calc->setIcon(QIcon(":/sync.ico"));
+    ui->pb_copy->setIcon(QIcon(":/copy.ico"));
 }
 
 MainWindow::~MainWindow()
@@ -42,4 +48,19 @@ void MainWindow::on_le_input_editingFinished()
 void MainWindow::on_le_input_textChanged(const QString &arg1)
 {
     on_pb_Calc_clicked();
+}
+
+void MainWindow::on_pb_paste_clicked()
+{
+    ui->le_input->setText(QApplication::clipboard()->text());
+}
+
+void MainWindow::on_pb_clear_clicked()
+{
+    ui->le_input->clear();
+}
+
+void MainWindow::on_pb_copy_clicked()
+{
+    QApplication::clipboard()->setText(ui->le_input->text());
 }

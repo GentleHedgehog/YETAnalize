@@ -29,6 +29,13 @@ signals:
 public slots:
 
 private:
+
+    const QString MSG_NO_INPUT      ;
+    const QString MSG_NO_TYPES      ;
+    const QString MSG_TYPE_FOUND    ;
+    const QString MSG_UNKNOWN_VALUES;
+
+
     double lastSumValue = 0;
     QMap<QPair<QString, int>, double> yetMap;
 

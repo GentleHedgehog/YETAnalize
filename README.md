@@ -2,6 +2,9 @@
 ### Environment 
 The program was written using Qt (5.7.0, MinGW 5.3.0 x32). Testing was performed on Windows 7 x64, Windows 10 x64
 
+*.pro file notes:
+#DEFINES += LANG_EN - uncomment this line to switch to the English interface
+
 ***
 
 Analize of YET (Russian abbreviation) (conditional unit of labor intensity of the worker). Calculates its sum.

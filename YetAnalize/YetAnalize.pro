@@ -24,3 +24,10 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     rsc.qrc
+
+
+
+TRANSLATIONS += QtLanguage_ru.ts
+CODECFORSRC     = UTF-8
+
+#DEFINES += LANG_EN

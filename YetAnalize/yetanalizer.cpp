@@ -3,10 +3,6 @@
 #include <QRegExp>
 
 namespace {
-const QString MSG_NO_INPUT = "Пустой ввод";
-const QString MSG_NO_TYPES = "Не найден ни один тип УЕТ";
-const QString MSG_TYPE_FOUND = "Найден тип УЕТ: ";
-const QString MSG_UNKNOWN_VALUES = "Неизвестные значения: ";
 
 const QList<QString> knownTypes = {"СТО", "СТТ"};
 const QList<QChar> knownMultipliers =
@@ -62,9 +58,13 @@ QPair<int, int> extractValueAndMultiplier(const QString &input)
 }
 }
 
-YetAnalizer::YetAnalizer(QObject *parent) : QObject(parent)
+YetAnalizer::YetAnalizer(QObject *parent)
+    : QObject(parent),
+    MSG_NO_INPUT        (QObject::tr("Пустой ввод")),
+    MSG_NO_TYPES        (QObject::tr("Не найден ни один тип УЕТ")),
+    MSG_TYPE_FOUND      (QObject::tr("Найден тип УЕТ: ")),
+    MSG_UNKNOWN_VALUES  (QObject::tr("Неизвестные значения: "))
 {
-
 }
 
 QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input)

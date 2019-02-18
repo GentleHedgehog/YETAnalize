@@ -1,12 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "yetanalizer.h"
 #include "yetfiller.h"
 #include <QClipboard>
 
 namespace {
-YetAnalizer analizer;
+
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     fillAnalizerWithYetInfo(analizer);
 
-    setWindowTitle("Подсчет УЕТ");
+    setWindowTitle(tr("Подсчет УЕТ"));
     analizer.setIsCollectUnknownValues(true);
 
     ui->pb_paste->setIcon(QIcon(":/paste.ico"));

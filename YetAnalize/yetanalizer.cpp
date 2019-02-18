@@ -205,6 +205,7 @@ void YetAnalizer::setIsCollectUnknownValues(bool value)
 
 QString YetAnalizer::getUnknownString()
 {
+    unknownString = MSG_UNKNOWN_VALUES;
     if (! unknownValues.isEmpty())
     {
         QString unknownValuesStr;
@@ -213,10 +214,8 @@ QString YetAnalizer::getUnknownString()
             unknownValuesStr += unknownValuesStr.isEmpty() ? "" : ", ";
             unknownValuesStr += s;
         }
-        unknownString = MSG_UNKNOWN_VALUES;
         unknownString += unknownValuesStr;
     }
-
     return unknownString;
 }
 

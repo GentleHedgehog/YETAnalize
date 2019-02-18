@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>403</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,9 +34,16 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="lbl_answer">
-         <property name="text">
-          <string>TextLabel</string>
+        <widget class="QTextEdit" name="lbl_answer">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="te_unknown_values">
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -73,7 +80,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>403</width>
      <height>21</height>
     </rect>
    </property>

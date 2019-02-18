@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fillAnalizerWithYetInfo(analizer);
 
     setWindowTitle("Подсчет УЕТ");
+    analizer.setIsCollectUnknownValues(true);
 }
 
 MainWindow::~MainWindow()
@@ -26,9 +27,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pb_Calc_clicked()
 {
-    QString ans;
+    QString ans;    
     analizer.analize(ui->le_input->text(), ans);
     ui->lbl_answer->setText(ans);
+    ui->te_unknown_values->setText(analizer.getUnknownString());
     ui->lbl_lastSum->setText(QString::number(analizer.lastSum()));
 }
 

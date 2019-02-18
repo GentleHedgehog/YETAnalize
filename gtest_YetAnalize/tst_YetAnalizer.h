@@ -124,6 +124,17 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithUnknownValues)
     ASSERT_STREQ_QT(yetAnalizer.getUnknownString(), "Неизвестные значения: СТТ 111, СТТ 222");
 }
 
+TEST_F(TestFixtureYetAnalize, returnNoUnknownValsWithoutUnknownValues)
+{
+    yetAnalizer.registerTypeWithValue("СТТ", "041", 0.1);
+    yetAnalizer.registerTypeWithValue("СТТ", "002", 0.1);
+    input = "Стт 041, 002";
+    yetAnalizer.setIsCollectUnknownValues(true);
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 002");
+    ASSERT_STREQ_QT(yetAnalizer.getUnknownString(), "Неизвестные значения: ");
+}
+
 TEST_F(TestFixtureYetAnalize, returnTwoTypesWithOneValue)
 {    
     input = "Сто041стт245";

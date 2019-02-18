@@ -9,10 +9,13 @@ class YetAnalizer : public QObject
     
     QStringList searchTypeTuples(QString typeName, const QString &input);
     QStringList searchValueTuples(const QString &input);
+    void parseTypeTuples(QString typeName, QStringList typeTuples, QString &types);
+
 public:
     explicit YetAnalizer(QObject *parent = nullptr);
 
-    bool analize(const QString &input, QString &ans);
+    bool analize(const QString &input,
+                 QString &ans);
 
     void appendValue(QString yetType, QString yetNumber, double yetValue);
     double lastSum();

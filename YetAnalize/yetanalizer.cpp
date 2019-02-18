@@ -39,12 +39,12 @@ QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input
 QStringList YetAnalizer::searchValueTuples(const QString &input)
 {
     QRegExp rx;
-    rx.setPattern("(\\d+\\*\\d+|\\d+)");
+    rx.setPattern("(\\d+\\s*\\*\\s*\\d+|\\d+)");
     QStringList res;
     int pos = 0;
 
     while ((pos = rx.indexIn(input, pos)) != -1) {
-        res << rx.cap(1);
+        res << rx.cap(1).remove(QRegExp("\\s"));
         pos += rx.matchedLength();
     }
     return res;
@@ -84,8 +84,36 @@ QPair<QString, int> extractMultiplier(const QString &input)
 }
 
 
+void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QString &types)
+{
+    types += types.isEmpty() ? "" : ", ";
+    types += typeName;
+
+    QPair<QString, int> key;
+    key.first = typeName;
+
+    for (int tupleIndex = 0; tupleIndex < typeTuples.size(); ++tupleIndex)
+    {
+        QStringList vt = searchValueTuples(typeTuples.at(tupleIndex));
+
+        for (int valueTupleIndex = 0; valueTupleIndex < vt.size(); ++valueTupleIndex)
+        {
+            types += " " + vt.at(valueTupleIndex);
+            QPair<QString, int> vt_pair = extractMultiplier(vt.at(valueTupleIndex));
+
+            bool ok = false;
+            int number = vt_pair.first.toInt(&ok);
+            assert(ok);
+            key.second = number;
+
+            lastSumValue += yetMap[key] * vt_pair.second;
+        }
+    }
+}
+
 bool YetAnalizer::analize(const QString &input, QString &ans)
 {
+//    QStringList unknownValues;
     lastSumValue = 0;
 
     bool ok = false;
@@ -100,34 +128,12 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
 
         for (int i = 0; i < knownTypes.size(); ++i)
         {
-            QStringList l = searchTypeTuples(knownTypes.at(i), input);
+            QStringList typeTuples = searchTypeTuples(knownTypes.at(i), input);
 
-            if (l.size())
+            if (typeTuples.size())
             {
                 ok = true;
-                types += types.isEmpty() ? "" : ", ";
-                types += knownTypes.at(i);
-
-                QPair<QString, int> key;
-                key.first = knownTypes.at(i);
-
-                for (int tupleIndex = 0; tupleIndex < l.size(); ++tupleIndex)
-                {
-                    QStringList vt = searchValueTuples(l.at(tupleIndex));
-
-                    for (int valueTupleIndex = 0; valueTupleIndex < vt.size(); ++valueTupleIndex)
-                    {
-                        types += " " + vt.at(valueTupleIndex);
-                        QPair<QString, int> vt_pair = extractMultiplier(vt.at(valueTupleIndex));
-
-                        bool ok = false;
-                        int number = vt_pair.first.toInt(&ok);
-                        assert(ok);
-                        key.second = number;
-
-                        lastSumValue += yetMap[key] * vt_pair.second;
-                    }
-                }
+                parseTypeTuples(knownTypes.at(i), typeTuples, types);
             }
         }
 

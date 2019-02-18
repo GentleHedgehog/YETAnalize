@@ -141,9 +141,23 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplier)
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2");
 }
 
+TEST_F(TestFixtureYetAnalize, returnTypeWithValueIfValueMultiplierWithSpaces)
+{
+    input = "Сто 041 * 2";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2");
+}
+
 TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesMultipliers)
 {
     input = "Сто 041*2, 002*4";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 002*4");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesMultipliersWithSpaces)
+{
+    input = "Сто 041 *2, 002*  4";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 002*4");
 }

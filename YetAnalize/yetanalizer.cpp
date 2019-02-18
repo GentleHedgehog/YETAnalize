@@ -10,6 +10,11 @@ const QString MSG_TYPE_FOUND = "Найден тип УЕТ: ";
 const QString MSG_UNKNOWN_VALUES = "Неизвестные значения: ";
 
 const QList<QString> knownTypes = {"СТО", "СТТ"};
+const QList<QChar> knownMultipliers =
+{QString("*")[0],
+ QString("-")[0],
+ QString("x")[0]/*eng*/,
+ QString("х")[0]/*rus*/}; // hack with qsting - for proper convertion (UTF8 -> unicode)
 
 double lastSumValue = 0;
 QMap<QPair<QString, int>, double> yetMap;
@@ -70,7 +75,14 @@ QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input
 {
     QRegExp rx;
     rx.setCaseSensitivity(Qt::CaseInsensitive);
-    rx.setPattern(typeName + "[\\d\\s\\W]*");
+    QString pattern = "[\\d\\s\\W";
+    foreach (QChar c, knownMultipliers)
+    {
+        if (c.isLetter())
+            pattern += c;
+    }
+    pattern += "]*";
+    rx.setPattern(typeName + pattern);
 
     rx.indexIn(input);
 
@@ -86,12 +98,44 @@ QStringList YetAnalizer::searchTypeTuples(QString typeName, const QString &input
 QStringList YetAnalizer::searchValueTuples(const QString &input)
 {
     QRegExp rx;
-    rx.setPattern("(\\d+\\s*\\*\\s*\\d+|\\d+)");
+    QString pattern_number_with_mult_begin = "\\d+\\s*(";
+    QString pattern_number_with_mult_symbol = "";
+    foreach (QChar c, knownMultipliers)
+    {
+        pattern_number_with_mult_symbol +=
+                pattern_number_with_mult_symbol.isEmpty() ? "" : "|";
+        if (c == QString("*")[0])
+        {
+            pattern_number_with_mult_symbol += QString("\\");
+        }
+        pattern_number_with_mult_symbol += c;
+    }
+    QString pattern_number_with_mult_end = ")\\s*\\d+";
+    QString pattern_number_with_mult =
+            pattern_number_with_mult_begin +
+            pattern_number_with_mult_symbol +
+            pattern_number_with_mult_end;
+
+    QString pattern_number = "\\d+";
+
+    QString pattern = "(" + pattern_number_with_mult + "|" + pattern_number + ")";
+
+    rx.setPattern(pattern);
     QStringList res;
     int pos = 0;
 
     while ((pos = rx.indexIn(input, pos)) != -1) {
-        res << rx.cap(1).remove(QRegExp("\\s"));
+        QString foundValue = rx.cap(1);
+        foundValue.remove(QRegExp("\\s"));
+        foreach (QChar c, knownMultipliers)
+        {
+            if (foundValue.contains(c))
+            {
+                foundValue.replace(c, '*');
+                break;
+            }
+        }
+        res << foundValue;
         pos += rx.matchedLength();
     }
     return res;

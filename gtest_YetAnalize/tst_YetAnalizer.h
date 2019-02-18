@@ -34,7 +34,6 @@ protected:
      */
 };
 
-// TODO show unknown types and values
 // TODO replace other symbols to * (-, x (eng), х (rus))
 
 TEST_F(TestFixtureYetAnalize, errorIfEmptyInput)
@@ -161,6 +160,13 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplier)
     input = "Сто 041*2";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplierLikeOtherSymbols)
+{
+    input = "Сто 041-2 042x3 043х4";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 042*3 043*4");
 }
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithValueIfValueMultiplierWithSpaces)

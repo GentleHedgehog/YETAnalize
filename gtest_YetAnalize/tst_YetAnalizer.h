@@ -118,9 +118,10 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithTwoValuesWithUnknownValues)
     yetAnalizer.registerTypeWithValue("СТТ", "041", 0.1);
     yetAnalizer.registerTypeWithValue("СТТ", "002", 0.1);
     input = "Стт 041, 111, 222, 002";
-    yetAnalizer.setIsAnsUnknownValues(true);
+    yetAnalizer.setIsCollectUnknownValues(true);
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
-    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 002 | Неизвестные значения: СТТ 111, СТТ 222");
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТТ 041 002");
+    ASSERT_STREQ_QT(yetAnalizer.getUnknownString(), "Неизвестные значения: СТТ 111, СТТ 222");
 }
 
 TEST_F(TestFixtureYetAnalize, returnTwoTypesWithOneValue)
@@ -209,12 +210,14 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypesWithUnknownVal
     yetAnalizer.registerTypeWithValue("СТТ", "005", 1.68);
     yetAnalizer.registerTypeWithValue("СТТ", "006", 1.18);
     input = "Сто 001*2, 111*4, 002*4 Стт 005, 006*3";
-    yetAnalizer.setIsAnsUnknownValues(true);
+    yetAnalizer.setIsCollectUnknownValues(true);
 
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
 
 
-    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*4, СТТ 005 006*3"
-                         " | Неизвестные значения: СТО 111");
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*4, СТТ 005 006*3");
+    ASSERT_STREQ_QT(yetAnalizer.getUnknownString(),
+                    "Неизвестные значения: СТО 111");
+
     ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4 + 1.68 + 1.18*3);
 }

@@ -7,7 +7,7 @@ namespace {
 const QString MSG_NO_INPUT = "Пустой ввод";
 const QString MSG_NO_TYPES = "Не найден ни один тип УЕТ";
 const QString MSG_TYPE_FOUND = "Найден тип УЕТ: ";
-const QString MSG_UNKNOWN_VALUES = " | Неизвестные значения: ";
+const QString MSG_UNKNOWN_VALUES = "Неизвестные значения: ";
 
 const QList<QString> knownTypes = {"СТО", "СТТ"};
 
@@ -100,10 +100,32 @@ QStringList YetAnalizer::searchValueTuples(const QString &input)
 
 
 
-void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QString &types)
+void YetAnalizer::yetCalculationByKey(QPair<QString, int> key, int multiplier)
 {
-    types += types.isEmpty() ? "" : ", ";
-    types += typeName;
+    if (yetMap.contains(key))
+    {
+        lastSumValue += yetMap[key] * multiplier;
+    }
+}
+
+void YetAnalizer::printYetValueToAnswer(QString &answer, QPair<QString, int> key, QString nextValue)
+{
+    bool isPrintUnknownValues = ! isCollectUnknownValues;
+
+    if (yetMap.contains(key) || isPrintUnknownValues)
+    {
+        answer += " " + nextValue;
+    }
+    else
+    {
+        unknownValues.append(key.first + " " + QString::number(key.second));
+    }
+}
+
+void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QString &answer)
+{
+    answer += answer.isEmpty() ? "" : ", ";
+    answer += typeName;
 
     QPair<QString, int> key;
     key.first = typeName;
@@ -119,40 +141,14 @@ void YetAnalizer::parseTypeTuples(QString typeName, QStringList typeTuples, QStr
 
             key.second = vt_pair.first;
 
-            if (yetMap.contains(key))
-            {
-                lastSumValue += yetMap[key] * vt_pair.second;
-                types += " " + nextValue;
-            }
-            else
-            {
-                unknownValues.append(key.first + " " + QString::number(key.second));
-                bool isPrintUnknownValues = ! isAnsUnknownValues;
-                if (isPrintUnknownValues)
-                {
-                    types += " " + nextValue;
-                }
-            }
+            yetCalculationByKey(key, vt_pair.second);
+
+            printYetValueToAnswer(answer, key, nextValue);
         }
     }
 }
 
-void YetAnalizer::appendUnknownValuesToAnswer(QString &ans)
-{
-    if (isAnsUnknownValues)
-    {
-        if (! unknownValues.isEmpty())
-        {
-            QString unknownValuesStr;
-            foreach (const QString &s, unknownValues)
-            {
-                unknownValuesStr += unknownValuesStr.isEmpty() ? "" : ", ";
-                unknownValuesStr += s;
-            }
-            ans += MSG_UNKNOWN_VALUES + unknownValuesStr;
-        }
-    }
-}
+
 
 bool YetAnalizer::analize(const QString &input, QString &ans)
 {
@@ -181,8 +177,6 @@ bool YetAnalizer::analize(const QString &input, QString &ans)
         }
 
         ans = ok ? ans + types : MSG_NO_TYPES;
-
-        appendUnknownValuesToAnswer(ans);
     }
     return ok;
 }
@@ -204,9 +198,26 @@ double YetAnalizer::lastSum()
     return lastSumValue;
 }
 
-void YetAnalizer::setIsAnsUnknownValues(bool value)
+void YetAnalizer::setIsCollectUnknownValues(bool value)
 {
-    isAnsUnknownValues = value;
+    isCollectUnknownValues = value;
+}
+
+QString YetAnalizer::getUnknownString()
+{
+    if (! unknownValues.isEmpty())
+    {
+        QString unknownValuesStr;
+        foreach (const QString &s, unknownValues)
+        {
+            unknownValuesStr += unknownValuesStr.isEmpty() ? "" : ", ";
+            unknownValuesStr += s;
+        }
+        unknownString = MSG_UNKNOWN_VALUES;
+        unknownString += unknownValuesStr;
+    }
+
+    return unknownString;
 }
 
 

@@ -33,6 +33,10 @@ protected:
      */
 };
 
+// TODO show unknown types and values
+// TODO remove spaces like 041 * 2 -> 041*2
+// TODO replace other symbols to * (-, x (eng), х (rus))
+
 TEST_F(TestFixtureYetAnalize, errorIfEmptyInput)
 {
     ASSERT_FALSE(yetAnalizer.analize(input, ans));
@@ -42,6 +46,13 @@ TEST_F(TestFixtureYetAnalize, errorIfEmptyInput)
 TEST_F(TestFixtureYetAnalize, errorIfNothingFound)
 {
     input = "123abc456,23,gdp";
+    ASSERT_FALSE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Не найден ни один тип УЕТ");
+}
+
+TEST_F(TestFixtureYetAnalize, errorIfTypoInTypeName)
+{
+    input = "Стг";
     ASSERT_FALSE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Не найден ни один тип УЕТ");
 }
@@ -63,6 +74,13 @@ TEST_F(TestFixtureYetAnalize, returnTypeSTT)
 TEST_F(TestFixtureYetAnalize, returnSeveralTypes)
 {
     input = "стТ,Сто";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО, СТТ");
+}
+
+TEST_F(TestFixtureYetAnalize, returnSeveralTypesWithoutUnknown)
+{
+    input = "стТ,сте,Сто";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО, СТТ");
 }
@@ -105,6 +123,13 @@ TEST_F(TestFixtureYetAnalize, returnTwoTypesWithOneValue)
 TEST_F(TestFixtureYetAnalize, returnTwoTypesWithSeveralValues)
 {
     input = "Сто041,001,002   стт 245, 12, 23";
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041 001 002, СТТ 245 12 23");
+}
+
+TEST_F(TestFixtureYetAnalize, returnTwoTypesWithSeveralValuesWithoutUnknown)
+{
+    input = "Сто041,001,002сту 001, 003   стт 245, 12, 23";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041 001 002, СТТ 245 12 23");
 }

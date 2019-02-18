@@ -34,8 +34,6 @@ protected:
      */
 };
 
-// TODO replace other symbols to * (-, x (eng), х (rus))
-
 TEST_F(TestFixtureYetAnalize, errorIfEmptyInput)
 {
     ASSERT_FALSE(yetAnalizer.analize(input, ans));
@@ -164,6 +162,7 @@ TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplier)
 
 TEST_F(TestFixtureYetAnalize, returnTypeWithValueMultiplierLikeOtherSymbols)
 {
+//    symbols  * (-, x (eng), х (rus))
     input = "Сто 041-2 042x3 043х4";
     ASSERT_TRUE(yetAnalizer.analize(input, ans));
     ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 041*2 042*3 043*4");
@@ -203,6 +202,20 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliers)
     ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4);
 }
 
+TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersAndOtherMultSymbols)
+{
+    yetAnalizer.registerTypeWithValue("СТО", "001", 0.5);
+    yetAnalizer.registerTypeWithValue("СТО", "002", 0.5);
+    yetAnalizer.registerTypeWithValue("СТО", "003", 0.5);
+    input = "Сто 001 - 2  002 x 2  003 х 2";
+
+    ASSERT_TRUE(yetAnalizer.analize(input, ans));
+
+
+    ASSERT_STREQ_QT(ans, "Найден тип УЕТ: СТО 001*2 002*2 003*2");
+    ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.5*2 + 0.5*2 + 0.5*2);
+}
+
 TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypes)
 {
     yetAnalizer.registerTypeWithValue("СТО", "001", 0.31);
@@ -238,3 +251,4 @@ TEST_F(TestFixtureYetAnalize, getLastSumWithMultipliersForTwoTypesWithUnknownVal
 
     ASSERT_DOUBLE_EQ(yetAnalizer.lastSum(), 0.31*2 + 0.5*4 + 1.68 + 1.18*3);
 }
+

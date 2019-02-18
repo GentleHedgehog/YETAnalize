@@ -1,5 +1,4 @@
 #include "yetanalizer.h"
-#include <QMap>
 #include <cassert>
 #include <QRegExp>
 
@@ -15,9 +14,6 @@ const QList<QChar> knownMultipliers =
  QString("-")[0],
  QString("x")[0]/*eng*/,
  QString("х")[0]/*rus*/}; // hack with qsting - for proper convertion (UTF8 -> unicode)
-
-double lastSumValue = 0;
-QMap<QPair<QString, int>, double> yetMap;
 
 QPair<int, int> extractValueAndMultiplier(const QString &input)
 {

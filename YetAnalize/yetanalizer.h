@@ -2,6 +2,7 @@
 #define YETANALIZER_H
 
 #include <QObject>
+#include <QMap>
 
 class YetAnalizer : public QObject
 {
@@ -28,6 +29,9 @@ signals:
 public slots:
 
 private:
+    double lastSumValue = 0;
+    QMap<QPair<QString, int>, double> yetMap;
+
     bool isCollectUnknownValues = false;
     QStringList unknownValues;
     QString unknownString;

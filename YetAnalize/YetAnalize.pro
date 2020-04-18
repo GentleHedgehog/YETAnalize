@@ -18,13 +18,13 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     yetanalizer.h \
+    yetfiller.h \
     yetfiller.h
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
-    rsc.qrc
-
+    rsc.qrc \
 
 
 TRANSLATIONS += QtLanguage_ru.ts

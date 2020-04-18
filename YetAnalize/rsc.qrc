@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/clear.png</file>
+        <file>icons/clear2.png</file>
+        <file>icons/copy.png</file>
+        <file>icons/paste.png</file>
+        <file>icons/sync.png</file>
+    </qresource>
+</RCC>

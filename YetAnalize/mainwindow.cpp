@@ -19,10 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("Подсчет УЕТ"));
     analizer.setIsCollectUnknownValues(true);
 
-    ui->pb_paste->setIcon(QIcon(":/paste.ico"));
-    ui->pb_clear->setIcon(QIcon(":/clear.ico"));
-    ui->pb_Calc->setIcon(QIcon(":/sync.ico"));
-    ui->pb_copy->setIcon(QIcon(":/copy.ico"));
+    ui->pb_paste->setIcon(QIcon(":/icons/paste.png"));
+    ui->pb_clear->setIcon(QIcon(":/icons/clear.png"));
+    ui->pb_Calc->setIcon(QIcon(":/icons/sync.png"));
+    ui->pb_copy->setIcon(QIcon(":/icons/copy.png"));
 }
 
 MainWindow::~MainWindow()
